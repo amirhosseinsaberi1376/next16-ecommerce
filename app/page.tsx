@@ -1,8 +1,32 @@
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { prisma } from "@/lib/prisma";
 import ProductCard from "./ProductCard";
 
-export default async function HomePage() {
-  const products = await prisma.product.findMany();
+type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
+
+export default async function HomePage(props: { searchParams: SearchParams }) {
+  const searchParams = await props.searchParams;
+
+  const page = Number(searchParams.page) || 1;
+  const pageSize = 3;
+  const skip = (page - 1) * pageSize;
+
+  const [products, total] = await Promise.all([
+    prisma.product.findMany({
+      skip,
+      take: pageSize,
+    }),
+    prisma.product.count(),
+  ]);
+
+  const totalPage = Math.ceil(total / pageSize);
 
   return (
     <main className="container mx-auto p-4">
@@ -13,6 +37,21 @@ export default async function HomePage() {
           <ProductCard key={product.id} product={product} />
         ))}
       </div>
+      <Pagination className="mt-8">
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious href="#" />
+          </PaginationItem>
+
+          <PaginationItem>
+            <PaginationLink href="#">1</PaginationLink>
+          </PaginationItem>
+
+          <PaginationItem>
+            <PaginationNext href="#" />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
     </main>
   );
 }
