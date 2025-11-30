@@ -26,7 +26,7 @@ export default async function HomePage(props: { searchParams: SearchParams }) {
     prisma.product.count(),
   ]);
 
-  const totalPage = Math.ceil(total / pageSize);
+  const totalPages = Math.ceil(total / pageSize);
 
   return (
     <main className="container mx-auto p-4">
@@ -40,15 +40,22 @@ export default async function HomePage(props: { searchParams: SearchParams }) {
       <Pagination className="mt-8">
         <PaginationContent>
           <PaginationItem>
-            <PaginationPrevious href="#" />
+            <PaginationPrevious href={`?page=${page - 1}`} />
           </PaginationItem>
 
-          <PaginationItem>
-            <PaginationLink href="#">1</PaginationLink>
-          </PaginationItem>
+          {Array.from({ length: totalPages }, (_, index) => (
+            <PaginationItem key={index}>
+              <PaginationLink
+                href={`?page=${index + 1}`}
+                className={page === index + 1 ? "active" : ""}
+              >
+                {index + 1}
+              </PaginationLink>
+            </PaginationItem>
+          ))}
 
           <PaginationItem>
-            <PaginationNext href="#" />
+            <PaginationNext href={`?page=${page + 1}`} />
           </PaginationItem>
         </PaginationContent>
       </Pagination>
