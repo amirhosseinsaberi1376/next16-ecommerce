@@ -1,6 +1,7 @@
+import Navbar from "@/components/navbar";
 import type { Metadata } from "next";
+import { ThemeProvider } from "next-themes";
 import { Geist, Geist_Mono } from "next/font/google";
-import Link from "next/link";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -24,19 +25,28 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ul>
-          <li>
-            <Link href="/">Home</Link>
-          </li>
-          <li>
-            <Link href="/products">Products</Link>
-          </li>
-        </ul>
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <>
+            <header>
+              <Navbar />
+            </header>
+            {children}
+            <footer className="border-t border-dashed py-6">
+              <div className="container mx-auto text-sm text-muted-foreground text-center">
+                &copy; {new Date().getFullYear()} All rights reserved.
+              </div>
+            </footer>
+          </>
+        </ThemeProvider>
       </body>
     </html>
   );
