@@ -1,3 +1,4 @@
+import BreadCrumbs from "@/components/breadcrumbs";
 import {
   Pagination,
   PaginationContent,
@@ -45,8 +46,7 @@ export default async function HomePage(props: { searchParams: SearchParams }) {
 
   return (
     <main className="container mx-auto py-4">
-      <h1 className="text-3xl font-bold mb-6">Home</h1>
-
+      <BreadCrumbs items={[{ label: "Products", href: "/" }]} />
       <Suspense key={page} fallback={<ProductsSkeleton />}>
         <Products page={page} />
       </Suspense>
