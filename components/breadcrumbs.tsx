@@ -16,7 +16,7 @@ interface BreadCrumbsProps {
 
 export default function BreadCrumbs({ items }: BreadCrumbsProps) {
   return (
-    <Breadcrumb>
+    <Breadcrumb className="mb-6 h-8">
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
