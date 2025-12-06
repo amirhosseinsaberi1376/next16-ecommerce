@@ -1,4 +1,5 @@
 import BreadCrumbs from "@/components/breadcrumbs";
+import ProductListServerWrapper from "@/components/product-list-server-wrapper";
 import {
   Pagination,
   PaginationContent,
@@ -9,31 +10,11 @@ import {
 } from "@/components/ui/pagination";
 import { prisma } from "@/lib/prisma";
 import { Suspense } from "react";
-import ProductCard from "./ProductCard";
 import ProductsSkeleton from "./ProductsSkeleton";
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
 
 const pageSize = 3;
-
-async function Products({ page }: { page: number }) {
-  const skip = (page - 1) * pageSize;
-
-  const products = await prisma.product.findMany({
-    skip,
-    take: pageSize,
-  });
-
-  return (
-    <>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
-      </div>
-    </>
-  );
-}
 
 export default async function HomePage(props: { searchParams: SearchParams }) {
   const searchParams = await props.searchParams;
@@ -48,7 +29,7 @@ export default async function HomePage(props: { searchParams: SearchParams }) {
     <main className="container mx-auto py-4">
       <BreadCrumbs items={[{ label: "Products", href: "/" }]} />
       <Suspense key={page} fallback={<ProductsSkeleton />}>
-        <Products page={page} />
+        <ProductListServerWrapper params={{ page, pageSize }} />
       </Suspense>
 
       <Pagination className="mt-8">
