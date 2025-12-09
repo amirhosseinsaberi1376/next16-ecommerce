@@ -1,11 +1,10 @@
+import AddToCartButton from "@/components/add-to-cart";
 import BreadCrumbs from "@/components/breadcrumbs";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { getProductBySlug } from "@/lib/actions";
 import { formatPrice } from "@/lib/utils";
-import { ShoppingCart } from "lucide-react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
@@ -123,12 +122,7 @@ export default async function ProductPage({
 
             <Separator className="my-4" />
 
-            <div>
-              <Button disabled={product.inventory === 0} className="w-full">
-                <ShoppingCart className="mr-2 size-4" />
-                {product.inventory > 0 ? "Add to cart" : "Out of stock"}
-              </Button>
-            </div>
+            <AddToCartButton product={product} />
           </div>
         </CardContent>
       </Card>
