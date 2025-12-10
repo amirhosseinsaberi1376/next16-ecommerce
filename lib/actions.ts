@@ -2,6 +2,7 @@
 
 import { Prisma } from "@/app/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
+import { revalidateTag, unstable_cache } from "next/cache";
 import { cookies } from "next/headers";
 import { CartWithProducts, ShoppingCart } from "./types";
 
@@ -72,20 +73,22 @@ async function findCartFromCookie(): Promise<CartWithProducts | null> {
 
   if (!cartId) return null;
 
-  const cart = await prisma.cart.findUnique({
-    where: {
-      id: cartId,
-    },
-    include: {
-      items: {
+  return unstable_cache(
+    async (id: string) => {
+      return await prisma.cart.findUnique({
+        where: { id },
         include: {
-          product: true,
+          items: {
+            include: {
+              product: true,
+            },
+          },
         },
-      },
+      });
     },
-  });
-
-  return cart;
+    [`cart-${cartId}`],
+    { tags: [`cart-${cartId}`] }
+  )(cartId);
 }
 
 export async function getCart(): Promise<ShoppingCart | null> {
@@ -150,4 +153,6 @@ export async function addToCart(productId: string, quantity: number = 1) {
       },
     });
   }
+
+  revalidateTag(`cart-${cart.id}`, "max");
 }
