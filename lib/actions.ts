@@ -156,3 +156,38 @@ export async function addToCart(productId: string, quantity: number = 1) {
 
   updateTag(`cart-${cart.id}`);
 }
+
+export async function setProductQuantity(productId: string, quantity: number) {
+  if (quantity < 0) {
+    throw new Error("Quantity must be at least 0");
+  }
+
+  const cart = await findCartFromCookie();
+
+  if (!cart) throw new Error("Cart not found");
+
+  try {
+    if (quantity === 0) {
+      await prisma.cartItem.deleteMany({
+        where: {
+          cartId: cart.id,
+          productId,
+        },
+      });
+    } else {
+      await prisma.cartItem.updateMany({
+        where: {
+          cartId: cart.id,
+          productId,
+        },
+        data: {
+          quantity,
+        },
+      });
+    }
+    updateTag(`cart-${cart.id}`);
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to update the cart.");
+  }
+}
