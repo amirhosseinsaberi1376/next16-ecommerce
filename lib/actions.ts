@@ -2,7 +2,7 @@
 
 import { Prisma } from "@/app/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
-import { revalidateTag, unstable_cache } from "next/cache";
+import { unstable_cache, updateTag } from "next/cache";
 import { cookies } from "next/headers";
 import { CartWithProducts, ShoppingCart } from "./types";
 
@@ -154,5 +154,5 @@ export async function addToCart(productId: string, quantity: number = 1) {
     });
   }
 
-  revalidateTag(`cart-${cart.id}`, "max");
+  updateTag(`cart-${cart.id}`);
 }

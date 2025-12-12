@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { CartIndicator } from "./cart-indicator";
+import { CartIndicatorSkeleton } from "./cart-indicator-skeleton";
 import MobileNav from "./mobile-nav";
 import { ModeToggle } from "./mode-toggle";
 import SearchInput from "./search-input";
@@ -39,7 +41,9 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-0">
-          <CartIndicator />
+          <Suspense fallback={<CartIndicatorSkeleton />}>
+            <CartIndicator />
+          </Suspense>
           <ModeToggle />
         </div>
       </div>
