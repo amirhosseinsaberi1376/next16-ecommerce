@@ -25,6 +25,7 @@ model Product {
   category    Category @relation(fields: [categoryId], references: [id])
   inventory   Int @default(0)
   cartItems   CartItem[]
+  orderItems  OrderItem[]
 }
 
 model Cart {
@@ -45,5 +46,31 @@ model CartItem {
   updatedAt DateTime @updatedAt
   @@unique([cartId, productId])
   @@index(cartId)
+  @@index(productId)
+}
+
+
+model Order {
+  id String @id @default(cuid())
+  total Float
+  status String @default("pending")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  items OrderItem[]
+  stripeSessionId String?
+  stripePaymentIntentId String?
+}
+
+model OrderItem {
+  id String @id @default(cuid())
+  order Order @relation(fields:[orderId], references:[id])
+  orderId String
+  product Product @relation(fields:[productId], references:[id])
+  productId String
+  quantity Int @default(1)
+  price Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index(orderId)
   @@index(productId)
 }
