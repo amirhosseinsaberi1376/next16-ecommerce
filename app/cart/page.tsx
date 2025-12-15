@@ -1,11 +1,33 @@
 import CartEntry from "@/components/cart-entry";
 import CartSummary from "@/components/cart-summary";
+import { Button } from "@/components/ui/button";
 import { getCart } from "@/lib/actions";
+import { processCheckout, ProcessCheckoutResponse } from "@/lib/orders";
+import { redirect } from "next/navigation";
 
 export default async function CartPage() {
   const cart = await getCart();
 
-  console.log(cart);
+  const handleCheckout = async () => {
+    "use server";
+
+    let result: ProcessCheckoutResponse | null = null;
+
+    try {
+      result = await processCheckout();
+    } catch (error) {
+      console.log("Checkout error:", error);
+    }
+
+    if (result) {
+      await fetch(
+        process.env.NEXT_PUBLIC_URL +
+          `/api/checkout/success?orderId=${result.order.id}`
+      );
+    }
+
+    return redirect("/");
+  };
 
   return (
     <main className="container mx-auto py-4">
@@ -24,6 +46,11 @@ export default async function CartPage() {
             ))}
           </div>
           <CartSummary />
+          <form action={handleCheckout}>
+            <Button size="lg" className="mt-4 w-full">
+              Proceed to Checkout
+            </Button>
+          </form>
         </>
       )}
     </main>

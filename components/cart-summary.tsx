@@ -1,7 +1,5 @@
 import { getCart } from "@/lib/actions";
 import { formatPrice } from "@/lib/utils";
-import Link from "next/link";
-import { Button } from "./ui/button";
 
 export default async function CartSummary() {
   const cart = await getCart();
@@ -33,9 +31,6 @@ export default async function CartSummary() {
           <p className="font-bold">{formatPrice(total)}</p>
         </div>
       </div>
-      <Button size="lg" asChild className="mt-4 w-full">
-        <Link href="/checkout">Proceed to Checkout</Link>
-      </Button>
     </div>
   );
 }
