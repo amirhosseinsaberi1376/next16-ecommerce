@@ -6,10 +6,10 @@ import { getCart } from "./actions";
 import { prisma } from "./prisma";
 
 export type ProcessCheckoutResponse = {
-  order: OrderWithItemAndProduct;
+  order: OrderWithItemsAndProduct;
 };
 
-type OrderWithItemAndProduct = Prisma.OrderGetPayload<{
+export type OrderWithItemsAndProduct = Prisma.OrderGetPayload<{
   include: { items: { include: { product: true } } };
 }>;
 
