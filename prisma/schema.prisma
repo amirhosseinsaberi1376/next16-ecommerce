@@ -74,3 +74,13 @@ model OrderItem {
   @@index(orderId)
   @@index(productId)
 }
+
+model User {
+  id String @default(cuid())
+  email String @unique
+  password String 
+  name String?
+  role String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

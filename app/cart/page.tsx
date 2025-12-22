@@ -3,6 +3,7 @@ import CartSummary from "@/components/cart-summary";
 import { Button } from "@/components/ui/button";
 import { getCart } from "@/lib/actions";
 import { processCheckout, ProcessCheckoutResponse } from "@/lib/orders";
+import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 
 export default async function CartPage() {
@@ -26,7 +27,16 @@ export default async function CartPage() {
       );
     }
 
-    return redirect("/");
+    await prisma.order.update({
+      where: {
+        id: result?.order.id,
+      },
+      data: {
+        status: "paid",
+      },
+    });
+
+    return redirect(`/order/${result?.order.id}`);
   };
 
   return (
