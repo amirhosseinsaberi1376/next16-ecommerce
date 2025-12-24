@@ -19,6 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { LoginSchema, LoginSchemaType } from "@/lib/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 
@@ -31,8 +32,13 @@ export default function SignInPage() {
     },
   });
 
-  const onSubmit = (data: LoginSchemaType) => {
-    console.log(data);
+  const onSubmit = async (data: LoginSchemaType) => {
+    const result = await signIn("credentials", {
+      email: data.email,
+      password: data.password,
+      redirect: false,
+    });
+    console.log(result);
   };
 
   return (
