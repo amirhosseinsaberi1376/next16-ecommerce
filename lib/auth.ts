@@ -1,8 +1,37 @@
 import bcrypt from "bcryptjs";
-import NextAuth from "next-auth";
+import NextAuth, { Session, User } from "next-auth";
+import { JWT } from "next-auth/jwt";
 import Credentials from "next-auth/providers/credentials";
 import { prisma } from "./prisma";
 import { LoginSchema } from "./schemas";
+
+declare module "next-auth" {
+  interface User {
+    id: string;
+    role: string;
+    name: string | null;
+    email: string;
+  }
+
+  interface Session {
+    user: {
+      id: string;
+      name: string;
+      role: string;
+      email: string;
+    };
+    refreshedAt?: string;
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    id: string;
+    name: string;
+    email: string;
+    role: string;
+  }
+}
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -37,7 +66,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             console.log("Password does not match");
             return null;
           }
-          return user;
+          return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+          };
         } catch (error) {
           console.error("Error finding user", error);
           return null;
@@ -45,6 +79,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
   ],
+  callbacks: {
+    async jwt({ token, user }: { token: JWT; user: User }) {
+      if (user) {
+        token.id = user.id;
+        token.role = user.role;
+      }
+      return token;
+    },
+    async session({ session, token }: { session: Session; token: JWT }) {
+      if (session.user) {
+        session.user.id = token.id;
+        session.user.role = token.role;
+      }
+      return session;
+    },
+  },
   pages: {
     signIn: "/auth/signin",
   },

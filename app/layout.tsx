@@ -1,5 +1,6 @@
 import Navbar from "@/components/navbar";
 import type { Metadata } from "next";
+import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "next-themes";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -29,24 +30,26 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <>
-            <header>
-              <Navbar />
-            </header>
-            {children}
-            <footer className="border-t border-dashed py-6">
-              <div className="container mx-auto text-sm text-muted-foreground text-center">
-                &copy; {new Date().getFullYear()} All rights reserved.
-              </div>
-            </footer>
-          </>
-        </ThemeProvider>
+        <SessionProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <>
+              <header>
+                <Navbar />
+              </header>
+              {children}
+              <footer className="border-t border-dashed py-6">
+                <div className="container mx-auto text-sm text-muted-foreground text-center">
+                  &copy; {new Date().getFullYear()} All rights reserved.
+                </div>
+              </footer>
+            </>
+          </ThemeProvider>
+        </SessionProvider>
       </body>
     </html>
   );

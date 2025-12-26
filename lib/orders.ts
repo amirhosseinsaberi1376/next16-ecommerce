@@ -3,6 +3,7 @@
 import { Prisma } from "@/app/generated/prisma/client";
 import { cookies } from "next/headers";
 import { getCart } from "./actions";
+import { auth } from "./auth";
 import { prisma } from "./prisma";
 
 export type ProcessCheckoutResponse = {
@@ -15,6 +16,9 @@ export type OrderWithItemsAndProduct = Prisma.OrderGetPayload<{
 
 export async function processCheckout(): Promise<ProcessCheckoutResponse> {
   const cart = await getCart();
+
+  const session = await auth();
+  const userId = session?.user?.id;
 
   if (!cart || cart.items.length === 0) {
     throw new Error("Cart is empty.");
@@ -29,6 +33,7 @@ export async function processCheckout(): Promise<ProcessCheckoutResponse> {
       const newOrder = await tx.order.create({
         data: {
           total,
+          userId: userId || null,
         },
       });
 

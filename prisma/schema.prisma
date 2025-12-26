@@ -59,6 +59,8 @@ model Order {
   items OrderItem[]
   stripeSessionId String?
   stripePaymentIntentId String?
+  userId String?
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
 }
 
 model OrderItem {
@@ -76,11 +78,12 @@ model OrderItem {
 }
 
 model User {
-  id String @default(cuid())
+  id String @id @default(cuid())
   email String @unique
   password String 
   name String?
   role String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  orders Order[]
 }

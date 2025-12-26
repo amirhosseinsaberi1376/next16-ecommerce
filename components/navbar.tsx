@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Suspense } from "react";
+import AuthStatus from "./auth-status";
 import { CartIndicator } from "./cart-indicator";
 import { CartIndicatorSkeleton } from "./cart-indicator-skeleton";
 import MobileNav from "./mobile-nav";
@@ -41,6 +42,7 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-0">
+          <AuthStatus />
           <Suspense fallback={<CartIndicatorSkeleton />}>
             <CartIndicator />
           </Suspense>
