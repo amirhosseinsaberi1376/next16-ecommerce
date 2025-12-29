@@ -1,13 +1,21 @@
 "use client";
 
-import { LogIn, LogOut } from "lucide-react";
+import { DropdownMenu } from "@radix-ui/react-dropdown-menu";
+import { LogIn, User } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { Button } from "./ui/button";
+import {
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 import { Skeleton } from "./ui/skeleton";
 
 export default function AuthStatus() {
-  const { status } = useSession();
+  const { status, data: session } = useSession();
 
   if (status === "loading") {
     return <Skeleton className="size-9" />;
@@ -24,8 +32,21 @@ export default function AuthStatus() {
   }
 
   return (
-    <Button variant="ghost" size="icon" onClick={() => signOut()}>
-      <LogOut className="size-5" />
-    </Button>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon">
+          <User className="size-5" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
+        <DropdownMenuLabel>{session?.user.name}</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link href="/account">My Account</Link>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => signOut()}>Sign out</DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
