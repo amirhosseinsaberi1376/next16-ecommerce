@@ -46,6 +46,20 @@ export default async function ProductPage({
     notFound();
   }
 
+  const jsonLd = {
+    "@content": "http://schema.org",
+    "@type": "Product",
+    name: product.name,
+    image: product.image,
+    description: product.description,
+    offers: {
+      "@type": "Offer",
+      price: product.price,
+      priceCurrency: "USD",
+      availability: product.inventory > 0 ? "InStock" : "OutOfStock",
+    },
+  };
+
   const breadcrumbs = [
     { label: "Products", href: "/" },
     {
@@ -126,6 +140,10 @@ export default async function ProductPage({
           </div>
         </CardContent>
       </Card>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      ></script>
     </main>
   );
 }
